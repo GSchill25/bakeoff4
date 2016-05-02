@@ -13,7 +13,7 @@ float light = 0;
     int action = 0;
   }
 
-  int trialCount = 5; //this will be set higher for the bakeoff
+  int trialCount = 20; //this will be set higher for the bakeoff
   int trialIndex = 0;
   ArrayList<Target> targets = new ArrayList<Target>();
      
