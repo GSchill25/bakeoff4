@@ -4,6 +4,7 @@ import ketai.sensors.*;
 
 KetaiSensor sensor;
 float rotationX, rotationY, rotationZ;
+float light = 0;
 
 
   private class Target
@@ -67,10 +68,18 @@ float rotationX, rotationY, rotationZ;
     text("Trial " + (trialIndex+1) + " of " +trialCount, width/2, 50);
     text("Target #" + (targets.get(trialIndex).target)+1, width/2, 100);
     
+    String cover = "";
+    if(targets.get(trialIndex).action == 0){
+      cover = "Cover";
+    } else {
+      cover = "Don't Cover";
+    }
+    
     text("Gyroscope: \n" + 
     "x: " + nfp(rotationX, 1, 3) + "\n" +
     "y: " + nfp(rotationY, 1, 3) + "\n" +
-    "z: " + nfp(rotationZ, 1, 3), width/2, 150);
+    "z: " + nfp(rotationZ, 1, 3) + "\n" +
+    "proximity: " + cover, width/2, 180);
     
     fill(0, 255, 0);
     if(targets.get(trialIndex).target + 1 == 1){
@@ -87,7 +96,7 @@ float rotationX, rotationY, rotationZ;
     }
   }
   
-void onOrientationEvent(float x, float y, float z)
+void onAccelerometerEvent(float x, float y, float z)
 {
   
   rotationX = x;
@@ -101,17 +110,38 @@ void onOrientationEvent(float x, float y, float z)
       return;
     }
   else{
-    if(targets.get(trialIndex).target + 1 == 1 && x > 330){
-      trialIndex++;
+    if(targets.get(trialIndex).target + 1 == 1 && y < -5){
+      if(proximityCorrect()){
+        trialIndex++;
+      }
     }
-    if(targets.get(trialIndex).target + 1 == 2 && z < -45){
-      trialIndex++;
+    if(targets.get(trialIndex).target + 1 == 2 && x < -6){
+      if(proximityCorrect()){
+        trialIndex++;
+      }
     }
-    if(targets.get(trialIndex).target + 1 == 3 && x < 200){
-      trialIndex++;
+    if(targets.get(trialIndex).target + 1 == 3 && y > 6) {
+      if(proximityCorrect()){
+        trialIndex++;
+      }
     }
-    if(targets.get(trialIndex).target + 1 == 4 && z > 45){
-      trialIndex++;
+    if(targets.get(trialIndex).target + 1 == 4 && x > 6){
+      if(proximityCorrect()){
+        trialIndex++;
+      }
     }
   }
+}
+
+boolean proximityCorrect(){
+  if(targets.get(trialIndex).action == 0){
+    return light == 0;
+  } else{
+    return light > 0;
+  }
+}
+
+void onProximityEvent(float v)
+{
+  light = v;
 }
